@@ -1,6 +1,6 @@
 package shakram02.ahmed.shapelibrary.gl_internals;
 
-public class CircleMaker {
+public class ShapeMaker {
     private static final int COORDINATE_COUNT = 3;
 
     public static float[] CreateCirclePoints(float cx, float cy, float r, int num_segments) {
@@ -42,5 +42,39 @@ public class CircleMaker {
         }
 
         return circleVertices;
+    }
+
+    public static float[] createRectangle(float cx, float cy, float width, float height) {
+        float[] points = new float[6 * 3];
+        // Top right, ccw 1 2 3 4
+        // triangles 1 2 4, 2 3 4
+        int index = 0;
+
+        points[index++] = cx + width;
+        points[index++] = cy + height;
+        points[index++] = 0;
+
+        points[index++] = cx + width;
+        points[index++] = cy - height;
+        points[index++] = 0;
+
+        points[index++] = cx - width;
+        points[index++] = cy + height;
+        points[index++] = 0;
+
+        // -----
+        points[index++] = cx + width;
+        points[index++] = cy - height;
+        points[index++] = 0;
+
+        points[index++] = cx - width;
+        points[index++] = cy - height;
+        points[index++] = 0;
+
+        points[index++] = cx - width;
+        points[index++] = cy + height;
+        points[index++] = 0;
+
+        return points;
     }
 }
