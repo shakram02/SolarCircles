@@ -5,13 +5,14 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.SystemClock;
 
-import shakram02.ahmed.shapelibrary.gl_internals.CircleMaker;
+import shakram02.ahmed.shapelibrary.gl_internals.ShapeMaker;
 import shakram02.ahmed.shapelibrary.gl_internals.FrustumManager;
 import shakram02.ahmed.shapelibrary.gl_internals.UniformPainter;
 import shakram02.ahmed.shapelibrary.gl_internals.memory.GLProgram;
 import shakram02.ahmed.shapelibrary.gl_internals.memory.VertexBufferObject;
 import shakram02.ahmed.shapelibrary.gl_internals.shapes.Axis;
 import shakram02.ahmed.shapelibrary.gl_internals.shapes.Circle;
+import shakram02.ahmed.shapelibrary.gl_internals.shapes.Rectangle;
 
 import com.example.ahmed.solarcircles.graphics.utils.ValueLimiter;
 
@@ -29,6 +30,7 @@ public class BasicRenderer implements GLSurfaceView.Renderer {
     private Circle moonCircle;
     private Circle earthCircle;
     private Circle sunCircle;
+    private Rectangle rectangle;
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -86,20 +88,27 @@ public class BasicRenderer implements GLSurfaceView.Renderer {
         // Tell OpenGL to use this program when rendering.
         program.activate();
 
-        float circlePoints[] = CircleMaker.CreateCirclePoints(0, 0, 0.3f, 120);
+        float circlePoints[] = ShapeMaker.CreateCirclePoints(0, 0, 0.3f, 120);
         Integer colorHandle = program.getVariableHandle(colorVariableName);
+        Integer positionHandle = program.getVariableHandle(positionVariableName);
 
         UniformPainter moonPainter = new UniformPainter(colorHandle, moonColor);
         UniformPainter earthPainter = new UniformPainter(colorHandle, earthColor);
         UniformPainter sunPainter = new UniformPainter(colorHandle, sunColor);
 
         VertexBufferObject circleVertices = new VertexBufferObject(circlePoints,
-                program.getVariableHandle(positionVariableName), XYZ_POINT_LENGTH);
+                positionHandle, XYZ_POINT_LENGTH);
 
         Integer mvpHandle = program.getVariableHandle(mvpMatrixVariableName);
         sunCircle = new Circle(mViewMatrix, mvpHandle, circleVertices, sunPainter);
         moonCircle = new Circle(mViewMatrix, mvpHandle, circleVertices, moonPainter);
         earthCircle = new Circle(mViewMatrix, mvpHandle, circleVertices, earthPainter);
+
+        VertexBufferObject rectVertices = new VertexBufferObject(
+                ShapeMaker.createRectangle(0f, 0f, 0.4f, 0.2f),
+                positionHandle, 3);
+
+        rectangle = new Rectangle(mViewMatrix, mvpHandle, rectVertices, sunPainter);
     }
 
     @Override
@@ -110,6 +119,7 @@ public class BasicRenderer implements GLSurfaceView.Renderer {
         moonCircle.setProjectionMatrix(mProjectionMatrix);
         earthCircle.setProjectionMatrix(mProjectionMatrix);
         sunCircle.setProjectionMatrix(mProjectionMatrix);
+        rectangle.setProjectionMatrix(mProjectionMatrix);
     }
 
     private ValueLimiter horizontalLimiter = new ValueLimiter(0, -1, 1, 0.08f);
@@ -163,5 +173,6 @@ public class BasicRenderer implements GLSurfaceView.Renderer {
         moonCircle.draw();
 
         sunCircle.draw();
+        rectangle.draw();
     }
 }
