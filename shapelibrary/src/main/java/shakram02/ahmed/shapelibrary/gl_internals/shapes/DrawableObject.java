@@ -1,7 +1,7 @@
-package com.example.ahmed.solarcircles.graphics.gl_internals.shapes;
+package shakram02.ahmed.shapelibrary.gl_internals.shapes;
 
-import com.example.ahmed.solarcircles.graphics.gl_internals.Painter;
-import com.example.ahmed.solarcircles.graphics.gl_internals.memory.VertexBufferObject;
+import shakram02.ahmed.shapelibrary.gl_internals.Painter;
+import shakram02.ahmed.shapelibrary.gl_internals.memory.VertexBufferObject;
 
 /**
  * A shape that can be drawn, this class wraps the draw functions

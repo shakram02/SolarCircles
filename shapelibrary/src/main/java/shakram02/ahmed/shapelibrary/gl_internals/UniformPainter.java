@@ -1,4 +1,4 @@
-package com.example.ahmed.solarcircles.graphics.gl_internals;
+package shakram02.ahmed.shapelibrary.gl_internals;
 
 import android.opengl.GLES20;
 
@@ -13,7 +13,7 @@ public class UniformPainter implements Painter {
     /**
      * Initializes a new {@link UniformPainter}
      *
-     * @param uniformColorHandle Variable handle in {@link com.example.ahmed.solarcircles.graphics.gl_internals.memory.GLProgram}
+     * @param uniformColorHandle Variable handle in {@link shakram02.ahmed.shapelibrary.gl_internals.memory.GLProgram}
      * @param colorArray         An array containing a single color point for the uniform variable
      */
     public UniformPainter(Integer uniformColorHandle, float[] colorArray) {

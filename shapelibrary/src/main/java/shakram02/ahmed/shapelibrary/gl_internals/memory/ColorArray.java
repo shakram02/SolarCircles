@@ -1,4 +1,4 @@
-package com.example.ahmed.solarcircles.graphics.gl_internals.memory;
+package shakram02.ahmed.shapelibrary.gl_internals.memory;
 
 import java.nio.FloatBuffer;
 

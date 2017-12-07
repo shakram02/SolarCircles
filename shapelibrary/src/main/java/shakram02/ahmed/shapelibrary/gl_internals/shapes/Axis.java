@@ -1,4 +1,4 @@
-package com.example.ahmed.solarcircles.graphics.gl_internals.shapes;
+package shakram02.ahmed.shapelibrary.gl_internals.shapes;
 
 /**
  * Created by ahmed on 12/7/17.

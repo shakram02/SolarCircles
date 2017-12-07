@@ -1,13 +1,13 @@
-package com.example.ahmed.solarcircles.graphics.gl_internals.memory;
+package shakram02.ahmed.shapelibrary.gl_internals.memory;
 
 import android.opengl.GLES20;
-
-import com.example.ahmed.solarcircles.BuildConfig;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+
+import shakram02.ahmed.shapelibrary.BuildConfig;
 
 /**
  * floating point GPU data to be sent for rendering purposes, they might be position
