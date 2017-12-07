@@ -7,9 +7,11 @@ import android.os.SystemClock;
 
 import com.example.ahmed.solarcircles.graphics.gl_internals.CircleMaker;
 import com.example.ahmed.solarcircles.graphics.gl_internals.FrustumManager;
+import com.example.ahmed.solarcircles.graphics.gl_internals.UniformPainter;
 import com.example.ahmed.solarcircles.graphics.gl_internals.memory.GLProgram;
 import com.example.ahmed.solarcircles.graphics.gl_internals.memory.VertexArray;
 import com.example.ahmed.solarcircles.graphics.gl_internals.memory.VertexBufferObject;
+import com.example.ahmed.solarcircles.graphics.gl_internals.shapes.Circle;
 import com.example.ahmed.solarcircles.graphics.utils.ValueLimiter;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -25,6 +27,7 @@ public class BasicRenderer implements GLSurfaceView.Renderer {
 
     private VertexArray circleVertices;
     private String colorVariableName = "v_Color";
+    private UniformPainter moonPainter;
     /**
      * Store the view matrix. This can be thought of as our camera. This matrix transforms world space to eye space;
      * it positions things relative to our eye.
@@ -45,16 +48,11 @@ public class BasicRenderer implements GLSurfaceView.Renderer {
     private float earthColor[] = {0.13671875f, 0.26953125f, 0.92265625f, 0.0f};
     private float sunColor[] = {0.93671875f, 0.76953125f, 0.12265625f, 0.0f};
     private float moonColor[] = {0.93671875f, 0.73671875f, 0.63671875f, 0.0f};
-
-    private VertexBufferObject colorVbo;
-
-    public BasicRenderer() {
-
-    }
-
     private GLProgram program;
     private String mvpMatrixVariableName = "u_MVPMatrix";
     private VertexBufferObject verticesVbo;
+
+    Circle moonCircle;
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -105,23 +103,24 @@ public class BasicRenderer implements GLSurfaceView.Renderer {
         // Tell OpenGL to use this program when rendering.
         program.activate();
 
-
-        int pointCount = 64;
-        float radius = 0.321f;
-
-//        DrawableObject modelDrawableObject = new DrawableObject(pointCount, radius, 0f, 0f);
         float circleVertices[] = CircleMaker.CreateCirclePoints(0, 0, 0.3f, 120);
 
         this.circleVertices = new VertexArray(circleVertices,
                 program.getVariableHandle(positionVariableName), true);
 
         verticesVbo = new VertexBufferObject(this.circleVertices);
+        moonPainter = new UniformPainter(program.getVariableHandle(colorVariableName), moonColor);
+        moonCircle = new Circle(mViewMatrix, mProjectionMatrix,
+                program.getVariableHandle(mvpMatrixVariableName),
+                verticesVbo,
+                moonPainter);
 
     }
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         mProjectionMatrix = FrustumManager.createFrustum(0, 0, width, height);
+        moonCircle.setProjectionMatrix(mProjectionMatrix);
     }
 
     private ValueLimiter horizontalLimiter = new ValueLimiter(0, -1, 1, 0.08f);
@@ -170,11 +169,11 @@ public class BasicRenderer implements GLSurfaceView.Renderer {
         // Draw the triangle facing straight on.
         float deltaXM = (float) (deltaX / Math.sin(rotationRatio * Math.PI));
         float deltaYM = (float) (deltaY / Math.cos(rotationRatio * Math.PI));
-        GLES20.glUniform4fv(program.getVariableHandle(colorVariableName), 1, moonColor, 0);
-        Matrix.scaleM(mModelMatrix, 0, 0.3f, 0.3f, 0);
-        Matrix.translateM(mModelMatrix, 0, deltaXM / 2f, deltaYM, 0);
-//         Matrix.rotateM(mModelMatrix, 0,45, deltaX,deltaX, 0 );
-        drawCircle();
+
+        moonCircle.scale(0.3f, 0.3f);
+        moonCircle.translate(deltaXM / 2f, deltaYM);
+        moonCircle.setModelMatrix(mModelMatrix);
+        moonCircle.draw();
 
         //SUN
         Matrix.setIdentityM(mModelMatrix, 0);
