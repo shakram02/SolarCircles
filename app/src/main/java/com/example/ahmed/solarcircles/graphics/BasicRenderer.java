@@ -9,8 +9,8 @@ import com.example.ahmed.solarcircles.graphics.gl_internals.CircleMaker;
 import com.example.ahmed.solarcircles.graphics.gl_internals.FrustumManager;
 import com.example.ahmed.solarcircles.graphics.gl_internals.UniformPainter;
 import com.example.ahmed.solarcircles.graphics.gl_internals.memory.GLProgram;
-import com.example.ahmed.solarcircles.graphics.gl_internals.memory.VertexArray;
 import com.example.ahmed.solarcircles.graphics.gl_internals.memory.VertexBufferObject;
+import com.example.ahmed.solarcircles.graphics.gl_internals.shapes.Axis;
 import com.example.ahmed.solarcircles.graphics.gl_internals.shapes.Circle;
 import com.example.ahmed.solarcircles.graphics.utils.ValueLimiter;
 
@@ -24,35 +24,10 @@ import javax.microedition.khronos.opengles.GL10;
  */
 
 public class BasicRenderer implements GLSurfaceView.Renderer {
-
-    private VertexArray circleVertices;
-    private String colorVariableName = "v_Color";
-    private UniformPainter moonPainter;
-    /**
-     * Store the view matrix. This can be thought of as our camera. This matrix transforms world space to eye space;
-     * it positions things relative to our eye.
-     */
-    private float[] mViewMatrix = new float[16];
-
-    /**
-     * Store the projection matrix. This is used to project the scene onto a 2D viewport.
-     */
-    private float[] mProjectionMatrix = new float[16];
-
-    /**
-     * Store the model matrix. This matrix is used to move models
-     * from object space (where each model can be thought
-     * of being located at the center of the universe) to world space.
-     */
-    private float[] mModelMatrix = new float[16];
-    private float earthColor[] = {0.13671875f, 0.26953125f, 0.92265625f, 0.0f};
-    private float sunColor[] = {0.93671875f, 0.76953125f, 0.12265625f, 0.0f};
-    private float moonColor[] = {0.93671875f, 0.73671875f, 0.63671875f, 0.0f};
-    private GLProgram program;
-    private String mvpMatrixVariableName = "u_MVPMatrix";
-    private VertexBufferObject verticesVbo;
-
-    Circle moonCircle;
+    private final int XYZ_POINT_LENGTH = 3;
+    private Circle moonCircle;
+    private Circle earthCircle;
+    private Circle sunCircle;
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -74,6 +49,11 @@ public class BasicRenderer implements GLSurfaceView.Renderer {
         final float upY = 1.0f;
         final float upZ = 0.0f;
 
+        float earthColor[] = {0.13671875f, 0.26953125f, 0.92265625f, 0.0f};
+        float sunColor[] = {0.93671875f, 0.76953125f, 0.12265625f, 0.0f};
+        float moonColor[] = {0.93671875f, 0.73671875f, 0.63671875f, 0.0f};
+        float[] mViewMatrix = new float[16];
+
         Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, lookX,
                 lookY, lookZ, upX, upY, upZ);
 
@@ -93,34 +73,42 @@ public class BasicRenderer implements GLSurfaceView.Renderer {
                 + "   gl_FragColor = v_Color;     \n"
                 + "}                              \n";
 
-        program = new GLProgram(vertexShader, fragmentShader);
+        GLProgram program = new GLProgram(vertexShader, fragmentShader);
         String positionVariableName = "a_Position";
 
         program.declareAttribute(positionVariableName);
+        String colorVariableName = "v_Color";
         program.declareUniform(colorVariableName);
+        String mvpMatrixVariableName = "u_MVPMatrix";
         program.declareUniform(mvpMatrixVariableName);
 
         // Tell OpenGL to use this program when rendering.
         program.activate();
 
-        float circleVertices[] = CircleMaker.CreateCirclePoints(0, 0, 0.3f, 120);
+        float circlePoints[] = CircleMaker.CreateCirclePoints(0, 0, 0.3f, 120);
+        Integer colorHandle = program.getVariableHandle(colorVariableName);
 
-        this.circleVertices = new VertexArray(circleVertices,
-                program.getVariableHandle(positionVariableName), true);
+        UniformPainter moonPainter = new UniformPainter(colorHandle, moonColor);
+        UniformPainter earthPainter = new UniformPainter(colorHandle, earthColor);
+        UniformPainter sunPainter = new UniformPainter(colorHandle, sunColor);
 
-        verticesVbo = new VertexBufferObject(this.circleVertices);
-        moonPainter = new UniformPainter(program.getVariableHandle(colorVariableName), moonColor);
-        moonCircle = new Circle(mViewMatrix, mProjectionMatrix,
-                program.getVariableHandle(mvpMatrixVariableName),
-                verticesVbo,
-                moonPainter);
+        VertexBufferObject circleVertices = new VertexBufferObject(circlePoints,
+                program.getVariableHandle(positionVariableName), XYZ_POINT_LENGTH);
 
+        Integer mvpHandle = program.getVariableHandle(mvpMatrixVariableName);
+        sunCircle = new Circle(mViewMatrix, mvpHandle, circleVertices, sunPainter);
+        moonCircle = new Circle(mViewMatrix, mvpHandle, circleVertices, moonPainter);
+        earthCircle = new Circle(mViewMatrix, mvpHandle, circleVertices, earthPainter);
     }
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-        mProjectionMatrix = FrustumManager.createFrustum(0, 0, width, height);
+        //Store the projection matrix. This is used to project the scene onto a 2D viewport.
+        float[] mProjectionMatrix = FrustumManager.createFrustum(0, 0, width, height);
+
         moonCircle.setProjectionMatrix(mProjectionMatrix);
+        earthCircle.setProjectionMatrix(mProjectionMatrix);
+        sunCircle.setProjectionMatrix(mProjectionMatrix);
     }
 
     private ValueLimiter horizontalLimiter = new ValueLimiter(0, -1, 1, 0.08f);
@@ -150,60 +138,29 @@ public class BasicRenderer implements GLSurfaceView.Renderer {
         // Do a complete rotation every 10 seconds.
         long time = SystemClock.uptimeMillis() % 1000000L;
         float angleInDegrees = (360.0f / 10000.0f) * ((int) time);
-
-
         float rotationRatio = time / 2500.0f;
+
         // Draw the triangle facing straight on.
         float deltaX = (float) (2 * Math.sin(rotationRatio * Math.PI));
         float deltaY = (float) (2 * Math.cos(rotationRatio * Math.PI));
 
-        //EARTH
-        Matrix.setIdentityM(mModelMatrix, 0);
-        Matrix.scaleM(mModelMatrix, 0, 0.5f, 0.5f, 0);
-        Matrix.rotateM(mModelMatrix, 0, angleInDegrees, 0.0f, 0.0f, 1.0f);
-        Matrix.translateM(mModelMatrix, 0, deltaX, deltaY, 0);
-        GLES20.glUniform4fv(program.getVariableHandle(colorVariableName), 1, earthColor, 0);
-        drawCircle();
+        earthCircle.resetModelMatrix();
+        earthCircle.scale(0.5f, 0.5f);
+        earthCircle.rotate(angleInDegrees, Axis.Z);
+        earthCircle.translate(deltaX, deltaY);
+        earthCircle.draw();
 
         //MOON
         // Draw the triangle facing straight on.
-        float deltaXM = (float) (deltaX / Math.sin(rotationRatio * Math.PI));
-        float deltaYM = (float) (deltaY / Math.cos(rotationRatio * Math.PI));
+        float deltaXMoon = (float) (deltaX / Math.sin(rotationRatio * Math.PI));
+        float deltaYMoon = (float) (deltaY / Math.cos(rotationRatio * Math.PI));
 
+        // Coupling the model matrix is required by the relative motion
+        moonCircle.setModelMatrix(earthCircle.getModelMatrix());
         moonCircle.scale(0.3f, 0.3f);
-        moonCircle.translate(deltaXM / 2f, deltaYM);
-        moonCircle.setModelMatrix(mModelMatrix);
+        moonCircle.translate(deltaXMoon / 2f, deltaYMoon);
         moonCircle.draw();
 
-        //SUN
-        Matrix.setIdentityM(mModelMatrix, 0);
-        GLES20.glUniform4fv(program.getVariableHandle(colorVariableName), 1, sunColor, 0);
-        drawCircle();
-    }
-
-    /**
-     * Allocate storage for the final combined matrix.
-     * This will be passed into the shader program.
-     */
-    private float[] mMVPMatrix = new float[16];
-
-    private void drawCircle() {
-        verticesVbo.startDraw();
-
-        // This multiplies the view matrix by the model matrix, and stores the
-        // result in the MVP matrix (which currently contains model * view).
-        Matrix.multiplyMM(mMVPMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
-
-        // This multiplies the modelview matrix by the projection matrix, and stores the result in the MVP matrix
-        // (which now contains model * view * projection).
-        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVPMatrix, 0);
-
-        // Send the matrix to shaders
-        GLES20.glUniformMatrix4fv(program.getVariableHandle(mvpMatrixVariableName),
-                1, false, mMVPMatrix, 0);
-
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, verticesVbo.getItemCount());
-
-        verticesVbo.endDraw();
+        sunCircle.draw();
     }
 }

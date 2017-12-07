@@ -4,7 +4,8 @@ import com.example.ahmed.solarcircles.graphics.gl_internals.Painter;
 import com.example.ahmed.solarcircles.graphics.gl_internals.memory.VertexBufferObject;
 
 /**
- * Created by ahmed on 11/23/17.
+ * A shape that can be drawn, this class wraps the draw functions
+ * of different shapes in a convenient interface
  */
 
 public abstract class DrawableObject extends Transform {
@@ -14,12 +15,10 @@ public abstract class DrawableObject extends Transform {
     final VertexBufferObject vertices;
     final Painter painter;
 
-    public DrawableObject(float[] viewMatrix,
-                          float[] projectionMatrix,
-                          int mvpHandle,
-                          VertexBufferObject vertices,
-                          Painter painter) {
-        super(viewMatrix, projectionMatrix);
+    DrawableObject(float[] viewMatrix, int mvpHandle,
+                   VertexBufferObject vertices,
+                   Painter painter) {
+        super(viewMatrix);
         this.mvpHandle = mvpHandle;
 
         this.vertices = vertices;

@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * of the buffer is handled by the user
  */
 
-public abstract class FloatBufferBasedArray {
+public class FloatBufferBasedArray {
     private ArrayList<Float> raw;
     private boolean isDirty = true;
     private FloatBuffer cache;

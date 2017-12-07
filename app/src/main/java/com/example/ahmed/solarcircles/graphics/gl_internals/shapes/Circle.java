@@ -6,13 +6,14 @@ import com.example.ahmed.solarcircles.graphics.gl_internals.Painter;
 import com.example.ahmed.solarcircles.graphics.gl_internals.memory.VertexBufferObject;
 
 /**
- * Created by ahmed on 12/7/17.
+ * This is a circle, it can be drawn. the VBO is supplied from outside so that
+ * it's coupled with its location in the GL program
  */
 
 public class Circle extends DrawableObject {
-    public Circle(float[] viewMatrix, float[] projectionMatrix, int mvpHandle,
+    public Circle(float[] viewMatrix, int mvpHandle,
                   VertexBufferObject vertices, Painter painter) {
-        super(viewMatrix, projectionMatrix, mvpHandle, vertices, painter);
+        super(viewMatrix, mvpHandle, vertices, painter);
     }
 
     @Override
