@@ -8,6 +8,10 @@ public class VertexBufferObject {
     private int bufferId;
     private FloatBufferBasedArray dataBuffer;
 
+    public VertexBufferObject(float[] dataArray, int glHandle, int floatsPerItem) {
+        this(new FloatBufferBasedArray(dataArray, glHandle, floatsPerItem, true));
+    }
+
     public VertexBufferObject(FloatBufferBasedArray dataBuffer) {
         this.dataBuffer = dataBuffer;
         int[] bufferIds = new int[1];
