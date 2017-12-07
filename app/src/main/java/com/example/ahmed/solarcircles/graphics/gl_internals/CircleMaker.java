@@ -29,4 +29,18 @@ public class CircleMaker {
 
         return points;
     }
+
+    public static float[] createCircle(int pointCount, float radius) {
+        float circleVertices[] = new float[pointCount * 3];
+        final float TWO_PI = (float) (Math.PI * 2f);
+
+        for (int i = 0; i < pointCount; i++) {
+            float angleRadians = ((float) (i) / (float) pointCount) * TWO_PI;
+            circleVertices[(i * 3)] = (float) (radius * Math.sin(angleRadians));
+            circleVertices[(i * 3) + 1] = (float) (radius * Math.cos(angleRadians));
+            circleVertices[(i * 3) + 2] = 0;
+        }
+
+        return circleVertices;
+    }
 }

@@ -5,6 +5,7 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.SystemClock;
 
+import com.example.ahmed.solarcircles.graphics.gl_internals.CircleMaker;
 import com.example.ahmed.solarcircles.graphics.gl_internals.FrustumManager;
 import com.example.ahmed.solarcircles.graphics.gl_internals.memory.GLProgram;
 import com.example.ahmed.solarcircles.graphics.gl_internals.memory.VertexArray;
@@ -22,8 +23,8 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class BasicRenderer implements GLSurfaceView.Renderer {
 
-    private VertexArray mTriangleVertices;
-    String colorVariableName = "v_Color";
+    private VertexArray circleVertices;
+    private String colorVariableName = "v_Color";
     /**
      * Store the view matrix. This can be thought of as our camera. This matrix transforms world space to eye space;
      * it positions things relative to our eye.
@@ -41,9 +42,9 @@ public class BasicRenderer implements GLSurfaceView.Renderer {
      * of being located at the center of the universe) to world space.
      */
     private float[] mModelMatrix = new float[16];
-    float earthColor[] = {0.13671875f, 0.26953125f, 0.92265625f, 0.0f};
-    float sunColor[] = {0.93671875f, 0.76953125f, 0.12265625f, 0.0f};
-    float moonColor[] = {0.93671875f, 0.73671875f, 0.63671875f, 0.0f};
+    private float earthColor[] = {0.13671875f, 0.26953125f, 0.92265625f, 0.0f};
+    private float sunColor[] = {0.93671875f, 0.76953125f, 0.12265625f, 0.0f};
+    private float moonColor[] = {0.93671875f, 0.73671875f, 0.63671875f, 0.0f};
 
     private VertexBufferObject colorVbo;
 
@@ -53,7 +54,7 @@ public class BasicRenderer implements GLSurfaceView.Renderer {
 
     private GLProgram program;
     private String mvpMatrixVariableName = "u_MVPMatrix";
-    private VertexBufferObject positionVbo;
+    private VertexBufferObject verticesVbo;
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -106,22 +107,16 @@ public class BasicRenderer implements GLSurfaceView.Renderer {
 
 
         int pointCount = 64;
-        float circleVertices[] = new float[pointCount * 3];
+        float radius = 0.321f;
 
-        float radius = 0.298f;
-        final float TWO_PI = (float) (Math.PI * 2f);
+//        DrawableObject modelDrawableObject = new DrawableObject(pointCount, radius, 0f, 0f);
+        float circleVertices[] = CircleMaker.CreateCirclePoints(0, 0, 0.3f, 120);
 
-        for (int i = 0; i < pointCount; i++) {
-            float angleRadians = ((float) (i) / (float) pointCount) * TWO_PI;
-            circleVertices[(i * 3)] = (float) (radius * Math.sin(angleRadians));
-            circleVertices[(i * 3) + 1] = (float) (radius * Math.cos(angleRadians));
-            circleVertices[(i * 3) + 2] = 0;
-        }
-
-        mTriangleVertices = new VertexArray(circleVertices,
+        this.circleVertices = new VertexArray(circleVertices,
                 program.getVariableHandle(positionVariableName), true);
 
-        positionVbo = new VertexBufferObject(mTriangleVertices);
+        verticesVbo = new VertexBufferObject(this.circleVertices);
+
     }
 
     @Override
@@ -179,8 +174,8 @@ public class BasicRenderer implements GLSurfaceView.Renderer {
         Matrix.scaleM(mModelMatrix, 0, 0.3f, 0.3f, 0);
         Matrix.translateM(mModelMatrix, 0, deltaXM / 2f, deltaYM, 0);
 //         Matrix.rotateM(mModelMatrix, 0,45, deltaX,deltaX, 0 );
-
         drawCircle();
+
         //SUN
         Matrix.setIdentityM(mModelMatrix, 0);
         GLES20.glUniform4fv(program.getVariableHandle(colorVariableName), 1, sunColor, 0);
@@ -194,7 +189,7 @@ public class BasicRenderer implements GLSurfaceView.Renderer {
     private float[] mMVPMatrix = new float[16];
 
     private void drawCircle() {
-        positionVbo.startDraw();
+        verticesVbo.startDraw();
 
         // This multiplies the view matrix by the model matrix, and stores the
         // result in the MVP matrix (which currently contains model * view).
@@ -208,8 +203,8 @@ public class BasicRenderer implements GLSurfaceView.Renderer {
         GLES20.glUniformMatrix4fv(program.getVariableHandle(mvpMatrixVariableName),
                 1, false, mMVPMatrix, 0);
 
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, positionVbo.getItemCount());
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, verticesVbo.getItemCount());
 
-        positionVbo.endDraw();
+        verticesVbo.endDraw();
     }
 }
