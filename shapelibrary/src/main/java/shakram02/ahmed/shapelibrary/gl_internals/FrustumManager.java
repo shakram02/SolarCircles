@@ -15,7 +15,7 @@ public class FrustumManager {
 
         // Store the projection matrix. This is used to project the scene onto a 2D viewport.
         float[] projectionMatrix = new float[16];
-        GLES20.glViewport(0, 0, width, height);
+        GLES20.glViewport(x, y, width, height);
 
         // Create a new perspective projection matrix. The height will stay the same
         // while the width will vary as per aspect ratio.

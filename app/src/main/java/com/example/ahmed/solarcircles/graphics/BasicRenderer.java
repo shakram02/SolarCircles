@@ -12,6 +12,7 @@ import shakram02.ahmed.shapelibrary.gl_internals.memory.GLProgram;
 import shakram02.ahmed.shapelibrary.gl_internals.memory.VertexBufferObject;
 import shakram02.ahmed.shapelibrary.gl_internals.shapes.Axis;
 import shakram02.ahmed.shapelibrary.gl_internals.shapes.Circle;
+
 import com.example.ahmed.solarcircles.graphics.utils.ValueLimiter;
 
 import javax.microedition.khronos.egl.EGLConfig;
