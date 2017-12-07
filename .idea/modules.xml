@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SolarCircles.iml" filepath="$PROJECT_DIR$/SolarCircles.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/shapelibrary/shapelibrary.iml" filepath="$PROJECT_DIR$/shapelibrary/shapelibrary.iml" />
     </modules>
   </component>
 </project>

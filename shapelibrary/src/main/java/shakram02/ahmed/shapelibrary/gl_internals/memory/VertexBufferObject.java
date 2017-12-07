@@ -1,8 +1,8 @@
-package com.example.ahmed.solarcircles.graphics.gl_internals.memory;
+package shakram02.ahmed.shapelibrary.gl_internals.memory;
 
 import android.opengl.GLES20;
 
-import com.example.ahmed.solarcircles.graphics.gl_internals.ErrorChecker;
+import shakram02.ahmed.shapelibrary.gl_internals.ErrorChecker;
 
 public class VertexBufferObject {
     private int bufferId;

@@ -1,8 +1,8 @@
-package com.example.ahmed.solarcircles.graphics.gl_internals.memory;
+package shakram02.ahmed.shapelibrary.gl_internals.memory;
 
 import android.opengl.GLES20;
 
-import com.example.ahmed.solarcircles.graphics.gl_internals.ShaderManager;
+import shakram02.ahmed.shapelibrary.gl_internals.ShaderManager;
 
 import java.util.Hashtable;
 

@@ -1,8 +1,8 @@
-package com.example.ahmed.solarcircles.graphics.gl_internals;
+package shakram02.ahmed.shapelibrary.gl_internals;
 
 import android.opengl.GLES20;
 
-import com.example.ahmed.solarcircles.graphics.gl_internals.memory.FloatBufferBasedArray;
+import shakram02.ahmed.shapelibrary.gl_internals.memory.FloatBufferBasedArray;
 
 import java.util.Stack;
 

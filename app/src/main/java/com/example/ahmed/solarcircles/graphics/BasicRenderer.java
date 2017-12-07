@@ -5,13 +5,13 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.SystemClock;
 
-import com.example.ahmed.solarcircles.graphics.gl_internals.CircleMaker;
-import com.example.ahmed.solarcircles.graphics.gl_internals.FrustumManager;
-import com.example.ahmed.solarcircles.graphics.gl_internals.UniformPainter;
-import com.example.ahmed.solarcircles.graphics.gl_internals.memory.GLProgram;
-import com.example.ahmed.solarcircles.graphics.gl_internals.memory.VertexBufferObject;
-import com.example.ahmed.solarcircles.graphics.gl_internals.shapes.Axis;
-import com.example.ahmed.solarcircles.graphics.gl_internals.shapes.Circle;
+import shakram02.ahmed.shapelibrary.gl_internals.CircleMaker;
+import shakram02.ahmed.shapelibrary.gl_internals.FrustumManager;
+import shakram02.ahmed.shapelibrary.gl_internals.UniformPainter;
+import shakram02.ahmed.shapelibrary.gl_internals.memory.GLProgram;
+import shakram02.ahmed.shapelibrary.gl_internals.memory.VertexBufferObject;
+import shakram02.ahmed.shapelibrary.gl_internals.shapes.Axis;
+import shakram02.ahmed.shapelibrary.gl_internals.shapes.Circle;
 import com.example.ahmed.solarcircles.graphics.utils.ValueLimiter;
 
 import javax.microedition.khronos.egl.EGLConfig;

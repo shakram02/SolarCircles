@@ -1,4 +1,4 @@
-package com.example.ahmed.solarcircles.graphics.gl_internals;
+package shakram02.ahmed.shapelibrary.gl_internals;
 
 /**
  * Provides a coloring interface to objects, for different type of backing

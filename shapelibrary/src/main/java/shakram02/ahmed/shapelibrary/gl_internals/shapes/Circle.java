@@ -1,9 +1,9 @@
-package com.example.ahmed.solarcircles.graphics.gl_internals.shapes;
+package shakram02.ahmed.shapelibrary.gl_internals.shapes;
 
 import android.opengl.GLES20;
 
-import com.example.ahmed.solarcircles.graphics.gl_internals.Painter;
-import com.example.ahmed.solarcircles.graphics.gl_internals.memory.VertexBufferObject;
+import shakram02.ahmed.shapelibrary.gl_internals.Painter;
+import shakram02.ahmed.shapelibrary.gl_internals.memory.VertexBufferObject;
 
 /**
  * This is a circle, it can be drawn. the VBO is supplied from outside so that
